@@ -1,0 +1,50 @@
+services:
+  - type: redis
+    name: potioncheck-redis
+    ipAllowList: []
+
+  - type: web
+    name: potioncheck-api
+    env: docker
+    rootDir: backend
+    healthCheckPath: /api/health/
+    disk:
+      name: potioncheck-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: AI_PROVIDER
+        value: groq
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:////app/data/potioncheck.db
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: potioncheck-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: PRODUCTION_DOMAIN
+        sync: false
+
+  - type: web
+    name: potioncheck-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_APP_NAME
+        value: PotionCheck
+      - key: VITE_API_BASE_URL
+        sync: false
