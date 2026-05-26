@@ -9,7 +9,7 @@ import { profileService } from "../services/profileService";
 
 const allergyOptions = ["Nuts", "Gluten", "Dairy", "Soy", "Eggs", "Shellfish", "Peanuts", "Fish"];
 const conditionOptions = ["Diabetes", "Hypertension", "Heart Disease", "Pregnant", "Kidney Disease", "Celiac Disease", "Lactose Intolerant", "None"];
-const dietOptions = ["Vegan", "Vegetarian", "Halal", "Kosher", "Jain", "Keto", "None"];
+const dietOptions = ["Vegan", "Vegetarian", "None"];
 
 function Section({ icon, title, children }) {
   return (

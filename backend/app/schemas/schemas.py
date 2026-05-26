@@ -85,3 +85,8 @@ class HistoryOut(BaseModel):
     total: int
     page: int
     limit: int
+
+
+class ChatQuestionIn(BaseModel):
+    scan_id: str
+    question: str = Field(min_length=1, max_length=4000)

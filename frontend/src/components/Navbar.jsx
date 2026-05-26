@@ -8,6 +8,7 @@ const links = [
   ["Home", "/"],
   ["Scanner", "/scanner"],
   ["History", "/history"],
+  ["Chatbot", "/chatbot"],
   ["Profile", "/profile"],
   ["Developer", "/developer"],
   ["About", "/about"]
@@ -65,7 +66,7 @@ export function Navbar() {
           </motion.aside>
         )}
       </AnimatePresence>
-      <div className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-6 border-t border-mint/15 bg-space/90 px-1 pb-[calc(.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-7 border-t border-mint/15 bg-space/90 px-1 pb-[calc(.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl md:hidden">
         {links.map(([name, path]) => (
           <Link key={path} to={path} className={`grid min-h-12 min-w-0 place-items-center gap-0.5 px-0.5 text-[10px] leading-tight ${location.pathname === path ? "text-mint" : "text-slate"}`}>
             <span className="font-orbitron">{name[0]}</span>

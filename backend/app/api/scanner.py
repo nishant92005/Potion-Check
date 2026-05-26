@@ -13,6 +13,7 @@ from app.services.ai import analyze_ingredients
 from app.services.cache import cache_get, cache_set
 from app.services.ocr import extract_ingredients_from_text, run_ocr
 from app.services.open_food_facts import ProductLookupError, ProductNotFoundError, fetch_product
+from app.services.serpapi import SerpApiLookupError, find_product_ingredients
 
 router = APIRouter(prefix="/api/scanner", tags=["scanner"])
 UPLOAD_DIR = Path("uploads")
@@ -53,6 +54,34 @@ async def get_cached_product(barcode: str) -> dict:
     return product
 
 
+async def get_serpapi_ingredients(barcode: str, product: Optional[dict] = None) -> dict:
+    key = f"serpapi:ingredients:{barcode}"
+    cached = await cache_get(key)
+    if cached:
+        return cached
+    result = await find_product_ingredients(barcode, product)
+    await cache_set(key, result, 86400)
+    return result
+
+
+async def enrich_product_from_google(barcode: str, product: Optional[dict] = None) -> dict:
+    product = product or {"barcode": barcode, "product_name": f"Product {barcode}", "source": "serpapi_google_search"}
+    search_data = await get_serpapi_ingredients(barcode, product)
+    current_name = product.get("product_name")
+    fallback_name = f"Product {barcode}"
+    enriched = {
+        **product,
+        "barcode": barcode,
+        "product_name": search_data.get("product_name") if current_name == fallback_name else current_name or search_data.get("product_name") or fallback_name,
+        "ingredients_text": search_data["ingredients_text"],
+        "ingredients_source": search_data["ingredients_source"],
+        "serpapi_query": search_data.get("serpapi_query"),
+        "serpapi_context": search_data.get("serpapi_context"),
+        "source": f"{product.get('source') or 'openfoodfacts'}+serpapi",
+    }
+    return enriched
+
+
 @router.post("/barcode")
 async def barcode(payload: BarcodeIn):
     try:
@@ -65,20 +94,40 @@ async def barcode(payload: BarcodeIn):
 
 @router.post("/barcode/analyze")
 async def analyze_barcode(payload: BarcodeAnalysisIn, user: Optional[User] = Depends(get_optional_user), db: AsyncSession = Depends(get_db)):
+    off_error = None
+    off_error_status = 404
+    off_error_detail = "Barcode product not found in OpenFoodFacts"
     try:
         product = await get_cached_product(payload.barcode)
     except ProductNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Barcode product not found in OpenFoodFacts") from exc
+        off_error = exc
+        product = {"barcode": payload.barcode, "product_name": f"Product {payload.barcode}", "source": "serpapi_google_search"}
     except ProductLookupError as exc:
-        raise HTTPException(status_code=502, detail=str(exc) or "OpenFoodFacts lookup failed") from exc
+        off_error = exc
+        off_error_status = 502
+        off_error_detail = str(exc) or "OpenFoodFacts lookup failed"
+        product = {"barcode": payload.barcode, "product_name": f"Product {payload.barcode}", "source": "serpapi_google_search"}
 
     ingredients = product.get("ingredients_text") or ""
+    serpapi_error = None
+    if not ingredients:
+        try:
+            product = await enrich_product_from_google(payload.barcode, product)
+            ingredients = product.get("ingredients_text") or ""
+        except SerpApiLookupError as exc:
+            serpapi_error = exc
+
+    if off_error and not ingredients:
+        raise HTTPException(status_code=off_error_status, detail=f"{off_error_detail}; SerpAPI fallback did not find ingredients") from off_error
     nutriments = product.get("nutriments") or product.get("nutrition") or {}
     if not ingredients:
-        raise HTTPException(status_code=422, detail="Product found, but ingredients are missing in OpenFoodFacts")
+        raise HTTPException(status_code=422, detail="Product found, but ingredients are missing in OpenFoodFacts") from serpapi_error
 
     profile = await profile_dict(user if payload.include_user_profile else None, payload.profile, db)
-    ai = await analyze_ingredients(profile, ingredients, nutriments, product_context=openfoodfacts_context(product))
+    product_context = openfoodfacts_context(product)
+    if product.get("serpapi_context"):
+        product_context = "\n".join(part for part in [product_context, f"Google search context from SerpAPI:\n{product['serpapi_context']}"] if part)
+    ai = await analyze_ingredients(profile, ingredients, nutriments, product_context=product_context)
     scan = ScanHistory(
         user_id=user.id if user else None,
         barcode=payload.barcode,

@@ -16,6 +16,7 @@ __pycache__/
 frontend/certs/
 backend/venv/
 backend/potioncheck.db
+backend/chroma_db/
 backend/data/
 backend/uploads/
 backend/images/

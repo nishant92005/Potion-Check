@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/profile", tags=["profile"])
 
 ALLOWED_ALLERGIES = {"Nuts", "Gluten", "Dairy", "Soy", "Eggs", "Shellfish", "Peanuts", "Fish"}
 ALLOWED_CONDITIONS = {"Diabetes", "Hypertension", "Heart Disease", "Pregnant", "Kidney Disease", "Celiac Disease", "Lactose Intolerant", "None"}
-ALLOWED_DIETS = {"Vegan", "Vegetarian", "Halal", "Kosher", "Jain", "Keto", "None"}
+ALLOWED_DIETS = {"Vegan", "Vegetarian", "None"}
 
 
 @router.get("/", response_model=ProfileOut)

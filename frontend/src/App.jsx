@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import Scanner from "./pages/Scanner";
 import Analysis from "./pages/Analysis";
 import History from "./pages/History";
+import Chatbot from "./pages/Chatbot";
 import About from "./pages/About";
 import Developer from "./pages/Developer";
 
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/scanner" element={<Scanner />} />
         <Route path="/analysis/:productId" element={<Analysis />} />
         <Route path="/history" element={<History />} />
+        <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/about" element={<About />} />
         <Route path="/developer" element={<Developer />} />
       </Routes>

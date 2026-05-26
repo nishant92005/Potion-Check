@@ -1,0 +1,1577 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PotionCheck SRS</title>
+  <style>
+@page {
+  size: A4;
+  margin: 18mm 16mm;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  color: #1f2937;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.45;
+  margin: 0;
+}
+h1, h2, h3, h4 {
+  color: #0f172a;
+  line-height: 1.2;
+  page-break-after: avoid;
+}
+h1 {
+  border-bottom: 2px solid #0f766e;
+  font-size: 24pt;
+  margin: 0 0 8mm;
+  padding-bottom: 4mm;
+  text-align: center;
+}
+h2 {
+  border-bottom: 1px solid #cbd5e1;
+  font-size: 17pt;
+  margin-top: 10mm;
+  padding-bottom: 2mm;
+}
+h3 {
+  font-size: 13pt;
+  margin-top: 6mm;
+}
+p {
+  margin: 0 0 3.5mm;
+}
+ul, ol {
+  margin-bottom: 4mm;
+  padding-left: 7mm;
+}
+table {
+  border-collapse: collapse;
+  margin: 4mm 0 6mm;
+  width: 100%;
+}
+th, td {
+  border: 1px solid #cbd5e1;
+  padding: 2mm 2.4mm;
+  vertical-align: top;
+}
+th {
+  background: #e2f8f3;
+  color: #0f172a;
+  font-weight: 700;
+}
+code {
+  background: #f1f5f9;
+  border-radius: 3px;
+  color: #0f172a;
+  font-family: Consolas, monospace;
+  font-size: 9.5pt;
+  padding: 0.5mm 1mm;
+}
+pre {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  overflow-wrap: anywhere;
+  padding: 3mm;
+  white-space: pre-wrap;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #cbd5e1;
+  margin: 6mm 0;
+}
+.toc-list {
+  font-size: 10pt;
+  margin: 3mm 0 6mm;
+}
+.toc-line {
+  align-items: baseline;
+  display: flex;
+  gap: 1.5mm;
+  line-height: 1.22;
+  margin: 0.7mm 0;
+  width: 100%;
+}
+.toc-main {
+  font-weight: 700;
+  margin-top: 1.4mm;
+}
+.toc-sub {
+  padding-left: 6mm;
+}
+.toc-title {
+  white-space: nowrap;
+}
+.toc-dots {
+  border-bottom: 1px dotted #111827;
+  flex: 1 1 auto;
+  min-width: 8mm;
+  transform: translateY(-1.2mm);
+}
+.toc-page {
+  min-width: 8mm;
+  text-align: right;
+}
+</style>
+</head>
+<body>
+<h1 id="software-requirements-specification">Software Requirements Specification</h1>
+<h2 id="potioncheck-ai-ingredient-intelligence-scanner">PotionCheck - AI Ingredient Intelligence Scanner</h2>
+<p>Version: 1.0<br />
+Date: 20 May 2026<br />
+Prepared for: PBL 6 Project<br />
+Prepared by: Project Team<br />
+Template basis: IEEE-style Software Requirements Specification</p>
+<hr />
+<h2 id="revision-history">Revision History</h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Description</th>
+<th>Author</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>20 May 2026</td>
+<td>Initial SRS for PotionCheck web application</td>
+<td>Project Team</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<div class="toc-list">
+  <div class="toc-line"><span class="toc-title">Revision History</span><span class="toc-dots"></span><span class="toc-page">ii</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">1. Introduction</span><span class="toc-dots"></span><span class="toc-page">1</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">1.1 Purpose</span><span class="toc-dots"></span><span class="toc-page">2</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">1.2 Document Conventions</span><span class="toc-dots"></span><span class="toc-page">2</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">1.3 Intended Audience and Reading Suggestions</span><span class="toc-dots"></span><span class="toc-page">2</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">1.4 Product Scope</span><span class="toc-dots"></span><span class="toc-page">3</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">1.5 References</span><span class="toc-dots"></span><span class="toc-page">3</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">2. Overall Description</span><span class="toc-dots"></span><span class="toc-page">4</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">2.1 Product Perspective</span><span class="toc-dots"></span><span class="toc-page">4</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">2.2 Product Functions</span><span class="toc-dots"></span><span class="toc-page">4</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">2.3 User Classes and Characteristics</span><span class="toc-dots"></span><span class="toc-page">4</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">2.4 Operating Environment</span><span class="toc-dots"></span><span class="toc-page">5</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">2.5 Design and Implementation Constraints</span><span class="toc-dots"></span><span class="toc-page">5</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">2.6 User Documentation</span><span class="toc-dots"></span><span class="toc-page">5</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">2.7 Assumptions and Dependencies</span><span class="toc-dots"></span><span class="toc-page">6</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">3. System Features</span><span class="toc-dots"></span><span class="toc-page">6</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.1 Authentication and User Session Management</span><span class="toc-dots"></span><span class="toc-page">6</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.2 Health Profile Management</span><span class="toc-dots"></span><span class="toc-page">7</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.3 Barcode Scanning and Product Lookup</span><span class="toc-dots"></span><span class="toc-page">7</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.4 Label Upload and OCR</span><span class="toc-dots"></span><span class="toc-page">8</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.5 Pasted Ingredient Text Analysis</span><span class="toc-dots"></span><span class="toc-page">8</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.6 AI Ingredient and Nutrition Analysis</span><span class="toc-dots"></span><span class="toc-page">9</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.7 Analysis Report Display</span><span class="toc-dots"></span><span class="toc-page">10</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.8 Scan History</span><span class="toc-dots"></span><span class="toc-page">10</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">3.9 System Health Monitoring</span><span class="toc-dots"></span><span class="toc-page">11</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">4. External Interface Requirements</span><span class="toc-dots"></span><span class="toc-page">11</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">4.1 User Interfaces</span><span class="toc-dots"></span><span class="toc-page">11</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">4.2 Hardware Interfaces</span><span class="toc-dots"></span><span class="toc-page">12</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">4.3 Software Interfaces</span><span class="toc-dots"></span><span class="toc-page">12</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">4.4 Communication Interfaces</span><span class="toc-dots"></span><span class="toc-page">13</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">5. Non-Functional Requirements</span><span class="toc-dots"></span><span class="toc-page">14</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">5.1 Performance Requirements</span><span class="toc-dots"></span><span class="toc-page">14</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">5.2 Reliability and Availability</span><span class="toc-dots"></span><span class="toc-page">14</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">5.3 Security Requirements</span><span class="toc-dots"></span><span class="toc-page">14</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">5.4 Usability Requirements</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">5.5 Maintainability Requirements</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">5.6 Portability Requirements</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">6. Data Requirements</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">6.1 Data Model</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">6.2 Data Validation</span><span class="toc-dots"></span><span class="toc-page">16</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">6.3 Data Retention</span><span class="toc-dots"></span><span class="toc-page">16</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">7. Other Requirements</span><span class="toc-dots"></span><span class="toc-page">17</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">7.1 Deployment Requirements</span><span class="toc-dots"></span><span class="toc-page">17</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">7.2 AI Provider Behavior</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">7.3 Safety and Disclaimer Requirement</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">7.4 Known Limitations</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
+  <div class="toc-line toc-sub"><span class="toc-title">7.5 Future Enhancements</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
+  <div class="toc-line toc-main"><span class="toc-title">8. Appendices</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
+  <div class="toc-line"><span class="toc-title">Appendix A: Main Technology Stack</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
+  <div class="toc-line"><span class="toc-title">Appendix B: Verdict Definitions</span><span class="toc-dots"></span><span class="toc-page">19</span></div>
+  <div class="toc-line"><span class="toc-title">Appendix C: Requirement Traceability Summary</span><span class="toc-dots"></span><span class="toc-page">19</span></div>
+</div>
+
+<hr />
+<h2 id="1-introduction">1. Introduction</h2>
+<h3 id="11-purpose">1.1 Purpose</h3>
+<p>This Software Requirements Specification describes the software requirements for PotionCheck, an AI-powered ingredient intelligence scanner. PotionCheck is a full-stack web application that helps users understand packaged food products by scanning barcodes, uploading label images, pasting ingredient text, or selecting fresh produce.</p>
+<p>The purpose of this document is to define the functional requirements, non-functional requirements, interface requirements, data requirements, system constraints, and deployment expectations for the PotionCheck project. It covers both major subsystems of the application: the React/Vite frontend used by consumers and the FastAPI backend used for authentication, product lookup, OCR processing, AI analysis, scan history, and health monitoring.</p>
+<p>This SRS will be used as a reference by developers, testers, project evaluators, and maintainers to understand what the system must do, how users interact with it, and how the application should behave under normal and fallback conditions.</p>
+<h3 id="12-document-conventions">1.2 Document Conventions</h3>
+<p>This document follows an IEEE-style Software Requirements Specification format. Section numbers are used to organize the document into introduction, overall description, system features, interface requirements, non-functional requirements, data requirements, and appendices.</p>
+<p>The following conventions are used:</p>
+<ul>
+<li>Functional requirements are labeled as <code>FR-001</code>, <code>FR-002</code>, and so on.</li>
+<li>Non-functional requirements are labeled as <code>NFR-001</code>, <code>NFR-002</code>, and so on.</li>
+<li>Backend API endpoints are written in monospace format, such as <code>/api/scanner/barcode/analyze</code>.</li>
+<li>File paths, configuration keys, and commands are written in monospace format.</li>
+<li>The words "shall" and "must" indicate mandatory requirements.</li>
+<li>The words "should" and "may" indicate recommended or optional behavior.</li>
+<li>Requirements in the same table are considered equal priority unless a future project plan assigns priority values.</li>
+</ul>
+<h3 id="13-intended-audience-and-reading-suggestions">1.3 Intended Audience and Reading Suggestions</h3>
+<p>This document is intended for the following readers:</p>
+<ul>
+<li>Project evaluators and faculty members who need to verify the scope, requirements, and implementation direction of the PBL 6 project.</li>
+<li>Developers who will implement or maintain the React frontend, FastAPI backend, AI analysis service, barcode scanner, OCR workflow, and deployment configuration.</li>
+<li>Testers who need to prepare test cases for authentication, profile management, barcode analysis, OCR upload, pasted-text analysis, AI fallback behavior, history, and error handling.</li>
+<li>Deployment maintainers who need to configure Docker Compose, Render, environment variables, database storage, Redis, Groq, Ollama, and CORS settings.</li>
+<li>Future contributors who need a structured overview of the system before modifying or extending it.</li>
+</ul>
+<p>Suggested reading order:</p>
+<ol>
+<li>Read Section 1 to understand the purpose, scope, and references.</li>
+<li>Read Section 2 for the overall system context, users, assumptions, and constraints.</li>
+<li>Read Section 3 for detailed functional requirements.</li>
+<li>Read Section 4 for frontend, backend, hardware, software, and API interface requirements.</li>
+<li>Read Section 5 for performance, reliability, security, usability, maintainability, and portability requirements.</li>
+<li>Read Section 6 for database and data validation details.</li>
+<li>Read Section 7 and the appendices for deployment notes, limitations, and requirement traceability.</li>
+</ol>
+<h3 id="14-product-scope">1.4 Product Scope</h3>
+<p>PotionCheck is designed to help users make better food choices by converting product labels and nutrition data into understandable, personalized ingredient reports. The system combines barcode product lookup, OCR, AI reasoning, user health profiles, and scan history in a single web application.</p>
+<p>The product supports the following main capabilities:</p>
+<ul>
+<li>Provide quick product analysis from barcodes, uploaded labels, pasted text, and produce selection.</li>
+<li>Detect potentially harmful or caution-worthy ingredients.</li>
+<li>Personalize warnings using allergies, health conditions, and diet type.</li>
+<li>Show health score, safety verdict, nutrition breakdown, AI summary, recommendation, frequency advice, and ingredient-level explanations.</li>
+<li>Generate a natural "Why this matters for you" explanation based on the user's profile and food-science context.</li>
+<li>Preserve scan history for authenticated users.</li>
+<li>Use Groq for primary LLM analysis and Ollama as fallback when Groq is unavailable or usage limits are exceeded.</li>
+<li>Continue functioning with local rule-based analysis when external or local AI services are unavailable.</li>
+</ul>
+<p>The project is not intended to replace medical advice, diagnosis, or professional nutrition consultation. It provides educational and informational guidance based on available product data, user profile inputs, and AI/rule-based analysis.</p>
+<h3 id="15-references">1.5 References</h3>
+<p>The following documents, files, and resources are referenced by this SRS:</p>
+<ul>
+<li>IEEE-style SRS template: <code>C:\Users\LOQ\Downloads\srs_template-ieee.pdf</code></li>
+<li>Project deployment guide: <code>DEPLOYMENT.md</code></li>
+<li>Docker Compose configuration: <code>docker-compose.yml</code></li>
+<li>Render deployment configuration: <code>render.yaml</code></li>
+<li>Frontend package definition: <code>frontend/package.json</code></li>
+<li>Backend dependencies: <code>backend/requirements.txt</code></li>
+<li>Frontend routing and page structure: <code>frontend/src/App.jsx</code></li>
+<li>Backend application entry point: <code>backend/app/main.py</code></li>
+<li>Backend API routers: <code>backend/app/api/</code></li>
+<li>Backend database models: <code>backend/app/models/entities.py</code></li>
+<li>AI analysis service: <code>backend/app/services/ai.py</code></li>
+<li>Open Food Facts product lookup service: <code>backend/app/services/open_food_facts.py</code></li>
+<li>Open Food Facts API: <code>https://world.openfoodfacts.org</code></li>
+<li>Groq API for LLM analysis</li>
+<li>Ollama local model runtime for fallback LLM analysis</li>
+</ul>
+<hr />
+<h2 id="2-overall-description">2. Overall Description</h2>
+<h3 id="21-product-perspective">2.1 Product Perspective</h3>
+<p>PotionCheck is an independent web-based health and ingredient analysis system. It consists of:</p>
+<ul>
+<li>A React single-page frontend built with Vite and Tailwind CSS.</li>
+<li>A FastAPI backend that exposes REST APIs.</li>
+<li>SQLite database storage through SQLAlchemy async models.</li>
+<li>Redis caching for product lookup data.</li>
+<li>Open Food Facts integration for barcode product information.</li>
+<li>Groq LLM integration for AI analysis with Ollama fallback.</li>
+<li>OCR support through Tesseract for uploaded label images.</li>
+</ul>
+<p>The application can run locally through separate frontend/backend commands, Docker Compose, or a cloud deployment such as Render.</p>
+<h3 id="22-product-functions">2.2 Product Functions</h3>
+<p>The major functions of PotionCheck are:</p>
+<ul>
+<li>User registration, login, logout, token refresh, and profile retrieval.</li>
+<li>Health profile creation and update.</li>
+<li>Barcode scanning through live camera, uploaded barcode image, or manual entry.</li>
+<li>Product data lookup from Open Food Facts.</li>
+<li>Ingredient text extraction from uploaded label images.</li>
+<li>Ingredient analysis from pasted text.</li>
+<li>AI-generated health verdict, safety score, health score, nutrition observations, ingredient explanations, and recommendation.</li>
+<li>Personalized warnings based on allergies, health conditions, and diet type.</li>
+<li>Scan history storage, filtering, searching, and deletion.</li>
+<li>Local frontend state persistence for profile and recent scan data.</li>
+<li>Health check endpoint for backend, database, Redis, and Open Food Facts availability.</li>
+</ul>
+<h3 id="23-user-classes-and-characteristics">2.3 User Classes and Characteristics</h3>
+<table>
+<thead>
+<tr>
+<th>User Class</th>
+<th>Description</th>
+<th>Expected Skill Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Guest User</td>
+<td>Uses scanning and analysis without signing in; local history/profile may be stored in browser state.</td>
+<td>Basic web usage</td>
+</tr>
+<tr>
+<td>Registered User</td>
+<td>Creates account, saves profile, receives personalized analysis, and can access server-side history.</td>
+<td>Basic web usage</td>
+</tr>
+<tr>
+<td>Health-Conscious Consumer</td>
+<td>Uses the product to review packaged food ingredients and nutrition.</td>
+<td>Basic nutrition awareness</td>
+</tr>
+<tr>
+<td>Developer/Maintainer</td>
+<td>Runs, debugs, deploys, and extends the application.</td>
+<td>Web development knowledge</td>
+</tr>
+<tr>
+<td>Evaluator/Instructor</td>
+<td>Reviews the system as a PBL project.</td>
+<td>General technical review</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-operating-environment">2.4 Operating Environment</h3>
+<p>Frontend environment:</p>
+<ul>
+<li>Browser: Chrome, Edge, or any modern browser with JavaScript enabled.</li>
+<li>Camera access requires localhost or HTTPS browser context.</li>
+<li>Node.js environment for development and build.</li>
+</ul>
+<p>Backend environment:</p>
+<ul>
+<li>Python 3 environment.</li>
+<li>FastAPI with Uvicorn.</li>
+<li>SQLite database by default.</li>
+<li>Redis for cache.</li>
+<li>Network access to Open Food Facts.</li>
+<li>Optional network/API access to Groq.</li>
+<li>Optional local Ollama server.</li>
+</ul>
+<p>Deployment environment:</p>
+<ul>
+<li>Docker Compose for local multi-service setup.</li>
+<li>Render deployment using <code>render.yaml</code>.</li>
+</ul>
+<h3 id="25-design-and-implementation-constraints">2.5 Design and Implementation Constraints</h3>
+<ul>
+<li>The frontend is a React single-page application using React Router.</li>
+<li>The backend must expose REST APIs under <code>/api</code>.</li>
+<li>Authentication uses JWT access tokens and HTTP-only refresh cookies.</li>
+<li>Passwords must be hashed using bcrypt.</li>
+<li>Barcode lookup depends on Open Food Facts availability.</li>
+<li>Groq API use requires <code>GROQ_API_KEY</code>.</li>
+<li>Ollama fallback requires a local or reachable Ollama server.</li>
+<li>Camera scanning depends on browser permissions and secure context requirements.</li>
+<li>SQLite is used for persistence; scalability is limited compared with client-server databases.</li>
+</ul>
+<h3 id="26-user-documentation">2.6 User Documentation</h3>
+<p>The application provides user guidance through interface labels, toasts, form validation messages, scan status messages, and deployment documentation. Additional user documentation may include:</p>
+<ul>
+<li>How to run the app locally.</li>
+<li>How to configure Groq and Ollama.</li>
+<li>How to scan a barcode or upload an ingredient label.</li>
+<li>How to interpret scores and warnings.</li>
+</ul>
+<h3 id="27-assumptions-and-dependencies">2.7 Assumptions and Dependencies</h3>
+<p>Assumptions:</p>
+<ul>
+<li>Users understand that the application provides informational guidance and not professional medical advice.</li>
+<li>Product data from Open Food Facts may be incomplete or inaccurate.</li>
+<li>AI-generated recommendations may require review and should not be treated as clinical diagnosis.</li>
+<li>Users grant camera permission when using live barcode scanning.</li>
+</ul>
+<p>Dependencies:</p>
+<ul>
+<li>Open Food Facts for barcode product data.</li>
+<li>Groq API for primary LLM analysis.</li>
+<li>Ollama for fallback LLM analysis.</li>
+<li>Tesseract OCR for label text extraction.</li>
+<li>Redis for cache.</li>
+<li>SQLite for local/persistent data.</li>
+</ul>
+<hr />
+<h2 id="3-system-features">3. System Features</h2>
+<h3 id="31-authentication-and-user-session-management">3.1 Authentication and User Session Management</h3>
+<h4 id="description">Description</h4>
+<p>The system shall allow users to register, log in, refresh tokens, log out, and retrieve the current authenticated user.</p>
+<h4 id="functional-requirements">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-001</td>
+<td>The system shall allow a new user to register with email, password, and full name.</td>
+</tr>
+<tr>
+<td>FR-002</td>
+<td>The system shall reject registration when the email is already registered.</td>
+</tr>
+<tr>
+<td>FR-003</td>
+<td>The system shall validate email format and password length.</td>
+</tr>
+<tr>
+<td>FR-004</td>
+<td>The system shall allow users to log in with valid credentials.</td>
+</tr>
+<tr>
+<td>FR-005</td>
+<td>The system shall reject invalid login credentials.</td>
+</tr>
+<tr>
+<td>FR-006</td>
+<td>The system shall issue JWT access tokens after successful login or registration.</td>
+</tr>
+<tr>
+<td>FR-007</td>
+<td>The system shall store refresh tokens in HTTP-only cookies.</td>
+</tr>
+<tr>
+<td>FR-008</td>
+<td>The system shall allow users to refresh access tokens with valid refresh cookies.</td>
+</tr>
+<tr>
+<td>FR-009</td>
+<td>The system shall allow users to log out and clear refresh cookies.</td>
+</tr>
+<tr>
+<td>FR-010</td>
+<td>The system shall expose a current-user endpoint for authenticated users.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-health-profile-management">3.2 Health Profile Management</h3>
+<h4 id="description_1">Description</h4>
+<p>The system shall store user health profile information for personalized ingredient analysis.</p>
+<h4 id="functional-requirements_1">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-011</td>
+<td>The system shall allow authenticated users to retrieve their saved profile.</td>
+</tr>
+<tr>
+<td>FR-012</td>
+<td>The system shall allow authenticated users to save allergies, health conditions, and diet type.</td>
+</tr>
+<tr>
+<td>FR-013</td>
+<td>The system shall validate health profile values against allowed lists.</td>
+</tr>
+<tr>
+<td>FR-014</td>
+<td>The system shall support allergies such as nuts, gluten, dairy, soy, eggs, shellfish, peanuts, and fish.</td>
+</tr>
+<tr>
+<td>FR-015</td>
+<td>The system shall support health conditions such as diabetes, hypertension, heart disease, pregnancy, kidney disease, celiac disease, and lactose intolerance.</td>
+</tr>
+<tr>
+<td>FR-016</td>
+<td>The frontend shall persist a local profile for anonymous or offline-style use.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-barcode-scanning-and-product-lookup">3.3 Barcode Scanning and Product Lookup</h3>
+<h4 id="description_2">Description</h4>
+<p>The system shall let users analyze products using live barcode scanning, uploaded barcode images, or manual barcode entry.</p>
+<h4 id="functional-requirements_2">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-017</td>
+<td>The system shall support manual barcode entry for 8 to 13 digit UPC/EAN codes.</td>
+</tr>
+<tr>
+<td>FR-018</td>
+<td>The system shall validate barcode format before sending analysis requests.</td>
+</tr>
+<tr>
+<td>FR-019</td>
+<td>The frontend shall support live barcode scanning using browser camera access.</td>
+</tr>
+<tr>
+<td>FR-020</td>
+<td>The frontend shall support barcode detection from uploaded images.</td>
+</tr>
+<tr>
+<td>FR-021</td>
+<td>The backend shall fetch product details from Open Food Facts by barcode.</td>
+</tr>
+<tr>
+<td>FR-022</td>
+<td>The backend shall cache product lookup results.</td>
+</tr>
+<tr>
+<td>FR-023</td>
+<td>The backend shall return a 404 response when a barcode product is not found.</td>
+</tr>
+<tr>
+<td>FR-024</td>
+<td>The backend shall return a clear error when Open Food Facts lookup fails.</td>
+</tr>
+<tr>
+<td>FR-025</td>
+<td>The system shall analyze barcode products when ingredients are available.</td>
+</tr>
+<tr>
+<td>FR-026</td>
+<td>The system shall notify the user if a product exists but ingredient data is missing.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-label-upload-and-ocr">3.4 Label Upload and OCR</h3>
+<h4 id="description_3">Description</h4>
+<p>The system shall allow users to upload food label images and extract ingredient text.</p>
+<h4 id="functional-requirements_3">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-027</td>
+<td>The frontend shall allow image upload for product label OCR.</td>
+</tr>
+<tr>
+<td>FR-028</td>
+<td>The backend shall accept image uploads only.</td>
+</tr>
+<tr>
+<td>FR-029</td>
+<td>The backend shall reject files larger than 10 MB.</td>
+</tr>
+<tr>
+<td>FR-030</td>
+<td>The backend shall store uploaded images temporarily in the uploads directory.</td>
+</tr>
+<tr>
+<td>FR-031</td>
+<td>The backend shall run OCR on uploaded images.</td>
+</tr>
+<tr>
+<td>FR-032</td>
+<td>The frontend shall display extracted text for user review and editing.</td>
+</tr>
+<tr>
+<td>FR-033</td>
+<td>The system shall allow analysis of OCR-extracted ingredients.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-pasted-ingredient-text-analysis">3.5 Pasted Ingredient Text Analysis</h3>
+<h4 id="description_4">Description</h4>
+<p>The system shall allow users to paste ingredient text directly and request analysis.</p>
+<h4 id="functional-requirements_4">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-034</td>
+<td>The frontend shall provide a text area for pasted ingredient lists.</td>
+</tr>
+<tr>
+<td>FR-035</td>
+<td>The frontend shall support basic ingredient parsing for user preview.</td>
+</tr>
+<tr>
+<td>FR-036</td>
+<td>The backend shall validate that ingredient text is not empty.</td>
+</tr>
+<tr>
+<td>FR-037</td>
+<td>The backend shall analyze pasted ingredient text without requiring barcode data.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="36-ai-ingredient-and-nutrition-analysis">3.6 AI Ingredient and Nutrition Analysis</h3>
+<h4 id="description_5">Description</h4>
+<p>The system shall generate AI-based ingredient analysis using Groq as the primary provider and Ollama as fallback.</p>
+<h4 id="functional-requirements_5">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-038</td>
+<td>The backend shall analyze ingredients using the configured AI provider.</td>
+</tr>
+<tr>
+<td>FR-039</td>
+<td>The default AI provider shall be Groq when configured.</td>
+</tr>
+<tr>
+<td>FR-040</td>
+<td>The backend shall fall back to Ollama when Groq is unavailable, rate-limited, or not configured.</td>
+</tr>
+<tr>
+<td>FR-041</td>
+<td>The backend shall fall back to local rule-based analysis when Ollama is unavailable.</td>
+</tr>
+<tr>
+<td>FR-042</td>
+<td>The analysis result shall include safety score, verdict, health score, and health verdict.</td>
+</tr>
+<tr>
+<td>FR-043</td>
+<td>The analysis result shall include flagged ingredients with severity, reason, scientific name, and personalized warning.</td>
+</tr>
+<tr>
+<td>FR-044</td>
+<td>The analysis result shall include all ingredients with status, reason, personalized explanation, benefit, excess-use concern, and "why this matters" paragraph.</td>
+</tr>
+<tr>
+<td>FR-045</td>
+<td>The analysis result shall include sugar analysis, sodium analysis, fitness analysis, daily use advice, and weekly use advice.</td>
+</tr>
+<tr>
+<td>FR-046</td>
+<td>The analysis result shall include health suitability flags such as healthy, gym friendly, and weight loss friendly.</td>
+</tr>
+<tr>
+<td>FR-047</td>
+<td>The AI prompt shall require valid JSON output.</td>
+</tr>
+<tr>
+<td>FR-048</td>
+<td>The backend shall normalize AI output to protect the frontend from missing fields.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="37-analysis-report-display">3.7 Analysis Report Display</h3>
+<h4 id="description_6">Description</h4>
+<p>The frontend shall display the complete analysis in a user-friendly report page.</p>
+<h4 id="functional-requirements_6">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-049</td>
+<td>The report shall show product name, brand, barcode, categories, and product image when available.</td>
+</tr>
+<tr>
+<td>FR-050</td>
+<td>The report shall show health score and verdict through a visual meter.</td>
+</tr>
+<tr>
+<td>FR-051</td>
+<td>The report shall show ingredient cards with expandable details.</td>
+</tr>
+<tr>
+<td>FR-052</td>
+<td>The ingredient card shall show "Why this matters for you" as one natural paragraph rather than separate labeled output.</td>
+</tr>
+<tr>
+<td>FR-053</td>
+<td>The report shall show nutriment breakdown for carbohydrates, protein, fat, sugar, sodium, and fiber.</td>
+</tr>
+<tr>
+<td>FR-054</td>
+<td>The report shall show AI summary and recommendation.</td>
+</tr>
+<tr>
+<td>FR-055</td>
+<td>The report shall warn when fallback/local rules were used.</td>
+</tr>
+<tr>
+<td>FR-056</td>
+<td>The frontend shall allow saving analysis to local history.</td>
+</tr>
+<tr>
+<td>FR-057</td>
+<td>The frontend shall allow sharing a report as an image.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="38-scan-history">3.8 Scan History</h3>
+<h4 id="description_7">Description</h4>
+<p>Authenticated users shall be able to retrieve, search, filter, and delete scan history.</p>
+<h4 id="functional-requirements_7">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-058</td>
+<td>The backend shall return paginated scan history for the authenticated user.</td>
+</tr>
+<tr>
+<td>FR-059</td>
+<td>The backend shall support filtering history by verdict.</td>
+</tr>
+<tr>
+<td>FR-060</td>
+<td>The backend shall support searching history by product name.</td>
+</tr>
+<tr>
+<td>FR-061</td>
+<td>The backend shall allow deletion of a single scan.</td>
+</tr>
+<tr>
+<td>FR-062</td>
+<td>The backend shall allow deletion of all scans only when confirmation matches the user's email.</td>
+</tr>
+<tr>
+<td>FR-063</td>
+<td>The frontend shall persist recent local history for quick access.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="39-system-health-monitoring">3.9 System Health Monitoring</h3>
+<h4 id="description_8">Description</h4>
+<p>The backend shall expose service health information.</p>
+<h4 id="functional-requirements_8">Functional Requirements</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-064</td>
+<td>The backend shall expose <code>/api/health/</code>.</td>
+</tr>
+<tr>
+<td>FR-065</td>
+<td>The health endpoint shall report database status.</td>
+</tr>
+<tr>
+<td>FR-066</td>
+<td>The health endpoint shall report Redis status.</td>
+</tr>
+<tr>
+<td>FR-067</td>
+<td>The health endpoint shall report Open Food Facts availability.</td>
+</tr>
+<tr>
+<td>FR-068</td>
+<td>The health endpoint shall include a timestamp.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-external-interface-requirements">4. External Interface Requirements</h2>
+<h3 id="41-user-interfaces">4.1 User Interfaces</h3>
+<p>The frontend shall include the following pages:</p>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Route</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Landing</td>
+<td><code>/</code></td>
+<td>Introduce the app and route users to features.</td>
+</tr>
+<tr>
+<td>Profile</td>
+<td><code>/profile</code></td>
+<td>Register/login and manage health profile.</td>
+</tr>
+<tr>
+<td>Scanner</td>
+<td><code>/scanner</code></td>
+<td>Scan barcode, upload label, paste text, or select produce.</td>
+</tr>
+<tr>
+<td>Analysis</td>
+<td><code>/analysis/:productId</code></td>
+<td>Display generated ingredient and nutrition report.</td>
+</tr>
+<tr>
+<td>History</td>
+<td><code>/history</code></td>
+<td>View saved scan history.</td>
+</tr>
+<tr>
+<td>About</td>
+<td><code>/about</code></td>
+<td>Explain application purpose.</td>
+</tr>
+<tr>
+<td>Developer</td>
+<td><code>/developer</code></td>
+<td>Present developer/project information.</td>
+</tr>
+</tbody>
+</table>
+<p>UI behavior requirements:</p>
+<ul>
+<li>The UI shall show toast notifications for success, warning, and error events.</li>
+<li>The UI shall show progress indicators during analysis and OCR.</li>
+<li>The UI shall be responsive for desktop and mobile screens.</li>
+<li>The UI shall handle network and backend errors with meaningful messages.</li>
+<li>The barcode scanner shall notify users when camera access is unavailable.</li>
+</ul>
+<h3 id="42-hardware-interfaces">4.2 Hardware Interfaces</h3>
+<ul>
+<li>Camera: Required for live barcode scanning.</li>
+<li>Keyboard: Required for manual barcode entry and pasted ingredient text.</li>
+<li>File input: Required for uploading label or barcode images.</li>
+<li>Network interface: Required for backend API, Open Food Facts, Groq, and deployment access.</li>
+</ul>
+<h3 id="43-software-interfaces">4.3 Software Interfaces</h3>
+<p>Frontend libraries:</p>
+<ul>
+<li>React 18</li>
+<li>React Router</li>
+<li>Vite</li>
+<li>Tailwind CSS</li>
+<li>Framer Motion</li>
+<li>Zustand</li>
+<li>Axios</li>
+<li>html5-qrcode</li>
+<li>Tesseract.js</li>
+<li>Three.js and related visual libraries</li>
+</ul>
+<p>Backend libraries:</p>
+<ul>
+<li>FastAPI</li>
+<li>Uvicorn</li>
+<li>SQLAlchemy async</li>
+<li>Aiosqlite</li>
+<li>Pydantic</li>
+<li>python-jose</li>
+<li>passlib bcrypt</li>
+<li>Redis</li>
+<li>HTTPX</li>
+<li>Groq SDK</li>
+<li>Pillow</li>
+<li>pytesseract</li>
+</ul>
+<p>External services:</p>
+<ul>
+<li>Open Food Facts API</li>
+<li>Groq Chat Completions API</li>
+<li>Ollama local chat API</li>
+<li>Redis server</li>
+</ul>
+<h3 id="44-communication-interfaces">4.4 Communication Interfaces</h3>
+<p>The frontend communicates with the backend through HTTP/HTTPS REST API calls. JSON is used for request and response bodies except for file upload, which uses multipart form data.</p>
+<p>Main backend endpoints:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/register</code></td>
+<td>Register user</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/login</code></td>
+<td>Login user</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/refresh</code></td>
+<td>Refresh access token</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/logout</code></td>
+<td>Logout user</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/auth/me</code></td>
+<td>Retrieve current user</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/profile/</code></td>
+<td>Get user profile</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/profile/</code></td>
+<td>Save user profile</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/scanner/barcode</code></td>
+<td>Fetch product by barcode</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/scanner/barcode/analyze</code></td>
+<td>Analyze barcode product</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/scanner/upload</code></td>
+<td>Upload image for OCR</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/scanner/text</code></td>
+<td>Clean and parse ingredient text</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/analysis/analyze</code></td>
+<td>Analyze custom ingredient payload</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/analysis/{analysis_id}</code></td>
+<td>Get saved analysis</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/analysis/product/{barcode}</code></td>
+<td>Get latest analysis for barcode</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/history/</code></td>
+<td>Get scan history</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/history/{scan_id}</code></td>
+<td>Delete one scan</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/history/all</code></td>
+<td>Delete all scans</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/health/</code></td>
+<td>Service health check</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-non-functional-requirements">5. Non-Functional Requirements</h2>
+<h3 id="51-performance-requirements">5.1 Performance Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-001</td>
+<td>The frontend shall provide immediate validation feedback for barcode length and format.</td>
+</tr>
+<tr>
+<td>NFR-002</td>
+<td>Product lookup results should be cached for 24 hours when Redis is available.</td>
+</tr>
+<tr>
+<td>NFR-003</td>
+<td>The UI shall display progress feedback for long-running OCR and AI analysis operations.</td>
+</tr>
+<tr>
+<td>NFR-004</td>
+<td>The Ollama request timeout shall be configurable.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-reliability-and-availability">5.2 Reliability and Availability</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-005</td>
+<td>The system shall return usable fallback analysis when AI providers are unavailable.</td>
+</tr>
+<tr>
+<td>NFR-006</td>
+<td>The system shall not crash the frontend when optional AI fields are missing.</td>
+</tr>
+<tr>
+<td>NFR-007</td>
+<td>The backend shall return structured HTTP errors for invalid input and unavailable product data.</td>
+</tr>
+<tr>
+<td>NFR-008</td>
+<td>The health endpoint shall help operators identify dependency outages.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-security-requirements">5.3 Security Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-009</td>
+<td>Passwords shall be hashed using bcrypt before storage.</td>
+</tr>
+<tr>
+<td>NFR-010</td>
+<td>Access tokens shall be JWT-based and time-limited.</td>
+</tr>
+<tr>
+<td>NFR-011</td>
+<td>Refresh tokens shall be stored in HTTP-only cookies.</td>
+</tr>
+<tr>
+<td>NFR-012</td>
+<td>User scan history shall be accessible only to the owning authenticated user.</td>
+</tr>
+<tr>
+<td>NFR-013</td>
+<td>Backend CORS shall allow configured frontend origins only.</td>
+</tr>
+<tr>
+<td>NFR-014</td>
+<td>File upload shall reject non-image files and files larger than 10 MB.</td>
+</tr>
+<tr>
+<td>NFR-015</td>
+<td>Secret keys and API keys shall be provided through environment variables in production.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-usability-requirements">5.4 Usability Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-016</td>
+<td>The system shall support manual, camera, upload, and pasted-text workflows.</td>
+</tr>
+<tr>
+<td>NFR-017</td>
+<td>The analysis output shall use plain language suitable for general consumers.</td>
+</tr>
+<tr>
+<td>NFR-018</td>
+<td>Ingredient explanations shall avoid overly technical medical wording.</td>
+</tr>
+<tr>
+<td>NFR-019</td>
+<td>The "Why this matters for you" output shall be a natural paragraph and not a labeled list.</td>
+</tr>
+<tr>
+<td>NFR-020</td>
+<td>Error messages shall guide users toward correction where possible.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="55-maintainability-requirements">5.5 Maintainability Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-021</td>
+<td>Backend routers shall remain separated by domain: auth, profile, scanner, analysis, history, and health.</td>
+</tr>
+<tr>
+<td>NFR-022</td>
+<td>AI provider logic shall remain isolated in the AI service module.</td>
+</tr>
+<tr>
+<td>NFR-023</td>
+<td>Product lookup logic shall remain isolated in the Open Food Facts service module.</td>
+</tr>
+<tr>
+<td>NFR-024</td>
+<td>Frontend API calls shall be centralized in service modules.</td>
+</tr>
+<tr>
+<td>NFR-025</td>
+<td>Deployment configuration shall be stored in Docker and Render configuration files.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="56-portability-requirements">5.6 Portability Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-026</td>
+<td>The frontend shall build into static assets deployable on static hosting.</td>
+</tr>
+<tr>
+<td>NFR-027</td>
+<td>The backend shall run as a Docker service.</td>
+</tr>
+<tr>
+<td>NFR-028</td>
+<td>The complete stack shall be runnable through Docker Compose.</td>
+</tr>
+<tr>
+<td>NFR-029</td>
+<td>Render deployment shall be supported through <code>render.yaml</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-data-requirements">6. Data Requirements</h2>
+<h3 id="61-data-model">6.1 Data Model</h3>
+<p>The backend database contains the following main entities:</p>
+<h4 id="user">User</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>UUID string primary key</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>Unique user email</td>
+</tr>
+<tr>
+<td><code>hashed_password</code></td>
+<td>Bcrypt password hash</td>
+</tr>
+<tr>
+<td><code>full_name</code></td>
+<td>User full name</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>Account active flag</td>
+</tr>
+<tr>
+<td><code>created_at</code></td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td><code>updated_at</code></td>
+<td>Update timestamp</td>
+</tr>
+</tbody>
+</table>
+<h4 id="userprofile">UserProfile</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>UUID string primary key</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td>Linked user</td>
+</tr>
+<tr>
+<td><code>allergies</code></td>
+<td>JSON list of allergies</td>
+</tr>
+<tr>
+<td><code>health_conditions</code></td>
+<td>JSON list of health conditions</td>
+</tr>
+<tr>
+<td><code>diet_type</code></td>
+<td>Diet preference</td>
+</tr>
+<tr>
+<td><code>updated_at</code></td>
+<td>Update timestamp</td>
+</tr>
+</tbody>
+</table>
+<h4 id="scanhistory">ScanHistory</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>UUID string primary key</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td>Optional linked user</td>
+</tr>
+<tr>
+<td><code>barcode</code></td>
+<td>Product barcode or <code>TEXT</code></td>
+</tr>
+<tr>
+<td><code>product_name</code></td>
+<td>Product/report name</td>
+</tr>
+<tr>
+<td><code>product_image_url</code></td>
+<td>Optional product image</td>
+</tr>
+<tr>
+<td><code>safety_score</code></td>
+<td>Integer score</td>
+</tr>
+<tr>
+<td><code>verdict</code></td>
+<td>SAFE, CAUTION, or DANGER</td>
+</tr>
+<tr>
+<td><code>flagged_count</code></td>
+<td>Number of flagged ingredients</td>
+</tr>
+<tr>
+<td><code>raw_product_data</code></td>
+<td>Raw source product JSON</td>
+</tr>
+<tr>
+<td><code>created_at</code></td>
+<td>Scan timestamp</td>
+</tr>
+</tbody>
+</table>
+<h4 id="analysis">Analysis</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>UUID string primary key</td>
+</tr>
+<tr>
+<td><code>scan_id</code></td>
+<td>Linked scan</td>
+</tr>
+<tr>
+<td><code>safety_score</code></td>
+<td>Safety score</td>
+</tr>
+<tr>
+<td><code>verdict</code></td>
+<td>Safety verdict</td>
+</tr>
+<tr>
+<td><code>flagged_ingredients</code></td>
+<td>JSON list of flagged ingredients</td>
+</tr>
+<tr>
+<td><code>all_ingredients</code></td>
+<td>JSON list of all ingredient explanations</td>
+</tr>
+<tr>
+<td><code>nutriments</code></td>
+<td>JSON nutrition data</td>
+</tr>
+<tr>
+<td><code>ai_summary</code></td>
+<td>AI summary text</td>
+</tr>
+<tr>
+<td><code>ai_recommendation</code></td>
+<td>AI recommendation text</td>
+</tr>
+<tr>
+<td><code>personalized_warnings</code></td>
+<td>JSON list of warnings</td>
+</tr>
+<tr>
+<td><code>created_at</code></td>
+<td>Analysis timestamp</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-data-validation">6.2 Data Validation</h3>
+<ul>
+<li>Email must match a valid email pattern.</li>
+<li>Password must be at least 8 characters.</li>
+<li>Barcode must be 8 to 13 digits.</li>
+<li>Ingredient text must not be empty.</li>
+<li>Uploaded file must be an image.</li>
+<li>Uploaded file must not exceed 10 MB.</li>
+<li>Health profile values must match allowed condition and diet lists.</li>
+</ul>
+<h3 id="63-data-retention">6.3 Data Retention</h3>
+<ul>
+<li>Authenticated scan history is stored in the backend database until deleted by the user.</li>
+<li>Local frontend scan history is stored in browser storage and limited to recent items.</li>
+<li>Uploaded OCR files are stored in the backend upload directory and should be cleaned periodically in production.</li>
+<li>Redis product cache entries are intended to expire after 24 hours.</li>
+</ul>
+<hr />
+<h2 id="7-other-requirements">7. Other Requirements</h2>
+<h3 id="71-deployment-requirements">7.1 Deployment Requirements</h3>
+<p>Local backend:</p>
+<pre><code class="language-bash">cd backend
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+</code></pre>
+<p>Local frontend:</p>
+<pre><code class="language-bash">cd frontend
+npm ci
+npm run dev
+</code></pre>
+<p>Docker Compose:</p>
+<pre><code class="language-bash">docker compose up --build
+</code></pre>
+<p>Production deployment:</p>
+<ul>
+<li>Backend: Docker web service.</li>
+<li>Frontend: Static Vite build.</li>
+<li>Redis: Managed Redis service.</li>
+<li>Required environment variables include <code>SECRET_KEY</code>, <code>AI_PROVIDER</code>, <code>GROQ_API_KEY</code>, <code>DATABASE_URL</code>, <code>REDIS_URL</code>, <code>ALLOWED_ORIGINS</code>, <code>PRODUCTION_DOMAIN</code>, and <code>VITE_API_BASE_URL</code>.</li>
+</ul>
+<h3 id="72-ai-provider-behavior">7.2 AI Provider Behavior</h3>
+<p>The system shall use the following provider order:</p>
+<ol>
+<li>Groq for primary LLM analysis when configured.</li>
+<li>Ollama when Groq fails, exceeds limits, times out, or is unavailable.</li>
+<li>Local rule-based analysis when Ollama is unavailable.</li>
+</ol>
+<p>The AI output shall be normalized before storage and frontend display. The frontend shall not depend on raw provider-specific response formats.</p>
+<h3 id="73-safety-and-disclaimer-requirement">7.3 Safety and Disclaimer Requirement</h3>
+<p>PotionCheck shall be treated as an educational and informational tool. It shall not claim to diagnose, treat, or prevent disease. Recommendations should encourage users with medical conditions, pregnancy, allergies, or severe dietary restrictions to verify information and seek professional advice when necessary.</p>
+<h3 id="74-known-limitations">7.4 Known Limitations</h3>
+<ul>
+<li>Product data depends on Open Food Facts coverage and accuracy.</li>
+<li>OCR accuracy depends on image clarity, label quality, and language.</li>
+<li>Barcode scanning quality depends on camera, lighting, focus, and browser permissions.</li>
+<li>AI output may require review and can vary between providers.</li>
+<li>SQLite is suitable for project-scale deployment but may need migration for high-traffic production.</li>
+<li>Nutrition scoring uses available product data; missing ingredients or nutriments reduce certainty.</li>
+</ul>
+<h3 id="75-future-enhancements">7.5 Future Enhancements</h3>
+<ul>
+<li>Add PDF export for analysis reports.</li>
+<li>Add admin dashboard for system monitoring.</li>
+<li>Add multilingual OCR and translation.</li>
+<li>Add serving-size based scoring in addition to per-100g scoring.</li>
+<li>Add PostgreSQL support for larger deployments.</li>
+<li>Add scheduled cleanup for uploaded OCR files.</li>
+<li>Add automated backend and frontend test suites.</li>
+<li>Add nutrition source citations in the user report.</li>
+</ul>
+<hr />
+<h2 id="8-appendices">8. Appendices</h2>
+<h3 id="appendix-a-main-technology-stack">Appendix A: Main Technology Stack</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>React, Vite, Tailwind CSS</td>
+</tr>
+<tr>
+<td>State</td>
+<td>Zustand</td>
+</tr>
+<tr>
+<td>HTTP Client</td>
+<td>Axios</td>
+</tr>
+<tr>
+<td>Animation</td>
+<td>Framer Motion, Three.js</td>
+</tr>
+<tr>
+<td>Barcode</td>
+<td>html5-qrcode</td>
+</tr>
+<tr>
+<td>OCR</td>
+<td>Tesseract.js frontend, pytesseract backend</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>FastAPI, Uvicorn</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>SQLite with SQLAlchemy async</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td>Redis</td>
+</tr>
+<tr>
+<td>AI</td>
+<td>Groq, Ollama, local rules</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Docker Compose, Render</td>
+</tr>
+</tbody>
+</table>
+<h3 id="appendix-b-verdict-definitions">Appendix B: Verdict Definitions</h3>
+<table>
+<thead>
+<tr>
+<th>Verdict</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAFE</td>
+<td>No major concerns detected in available data; normal portions may be acceptable.</td>
+</tr>
+<tr>
+<td>CAUTION</td>
+<td>Some ingredients, nutriments, or profile-related concerns require moderation.</td>
+</tr>
+<tr>
+<td>DANGER</td>
+<td>Significant allergy, ingredient, or nutritional concerns were detected.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="appendix-c-requirement-traceability-summary">Appendix C: Requirement Traceability Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Feature Area</th>
+<th>Requirement IDs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authentication</td>
+<td>FR-001 to FR-010</td>
+</tr>
+<tr>
+<td>Profile</td>
+<td>FR-011 to FR-016</td>
+</tr>
+<tr>
+<td>Barcode</td>
+<td>FR-017 to FR-026</td>
+</tr>
+<tr>
+<td>OCR Upload</td>
+<td>FR-027 to FR-033</td>
+</tr>
+<tr>
+<td>Text Analysis</td>
+<td>FR-034 to FR-037</td>
+</tr>
+<tr>
+<td>AI Analysis</td>
+<td>FR-038 to FR-048</td>
+</tr>
+<tr>
+<td>Report UI</td>
+<td>FR-049 to FR-057</td>
+</tr>
+<tr>
+<td>History</td>
+<td>FR-058 to FR-063</td>
+</tr>
+<tr>
+<td>Health Monitoring</td>
+<td>FR-064 to FR-068</td>
+</tr>
+<tr>
+<td>Non-functional</td>
+<td>NFR-001 to NFR-029</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

@@ -1,8 +1,14 @@
 import axios from "axios";
 import { useUserStore } from "../stores/useStores";
 
+const defaultApiBaseUrl = () => {
+  if (typeof window === "undefined") return "http://localhost:8000";
+  const { hostname } = window.location;
+  return `http://${hostname || "localhost"}:8000`;
+};
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000",
+  baseURL: import.meta.env.VITE_API_BASE_URL || defaultApiBaseUrl(),
   withCredentials: true
 });
 

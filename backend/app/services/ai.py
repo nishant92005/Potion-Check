@@ -90,7 +90,10 @@ Return JSON with this exact schema:
       "scientific_name": string,
       "status": "safe" | "caution" | "avoid",
       "reason": string,
-      "personalized_warning": string
+      "personalized_warning": string,
+      "why_this_matters": string,
+      "benefit": string,
+      "excess_warning": string
     }}
   ],
   "nutriment_observations": [string],
@@ -104,7 +107,11 @@ Important output rules:
 - Do not lower the score just because a product is packaged. If sugar, fat, sodium, additives, and harmful ingredients are reasonable, keep the score high.
 - Flag ingredients that are not ideal for long-term frequent intake, especially high sugar, glucose syrup, high fructose corn syrup, food colours, palm oil, artificial flavours, preservatives, BHA, BHT, MSG, and excessive sodium.
 - For every flagged ingredient, explain why it matters for long-term health in 1 to 2 practical sentences.
-- For every item in all_ingredients, include reason and personalized_warning. Safe ingredients can have short reassuring explanations.
+- For every item in all_ingredients, include reason, personalized_warning, why_this_matters, benefit, and excess_warning. Safe ingredients can have short reassuring explanations.
+- personalized_warning must explain why this ingredient matters for this specific user profile, including allergies, health conditions, diet type, or "no direct profile conflict" when nothing matches.
+- why_this_matters must be one natural paragraph for the user, not labeled bullets. It must combine the user's profile, globally known food-science/nutrition context about this ingredient, realistic benefits, and disadvantages if consumed too often.
+- benefit must explain any realistic nutrition, taste, texture, preservation, or energy benefit from the ingredient or clearly say it has no meaningful nutritional benefit.
+- excess_warning must explain the disadvantage or health concern if this ingredient or similar foods are consumed too often or in excess.
 - ai_summary must be 1 to 2 complete sentences explaining the product in plain language.
 - ai_recommendation must be 1 complete practical sentence for the user.
 - nutriment_observations must contain at least one sentence when nutriment data or notable ingredients are present.
@@ -153,7 +160,7 @@ Schema:
   "daily_frequency_advice": short string,
   "weekly_frequency_advice": short string,
   "flagged_ingredients": [{{"name": string, "scientific_name": string, "reason": short string, "severity": "low"|"medium"|"high", "personalized_warning": short string}}],
-  "all_ingredients": [{{"name": string, "scientific_name": string, "status": "safe"|"caution"|"avoid", "reason": short string, "personalized_warning": short string}}],
+  "all_ingredients": [{{"name": string, "scientific_name": string, "status": "safe"|"caution"|"avoid", "reason": short string, "personalized_warning": short string, "why_this_matters": short paragraph, "benefit": short string, "excess_warning": short string}}],
   "nutriment_observations": [short string],
   "ai_summary": short string,
   "ai_recommendation": short string
@@ -164,6 +171,7 @@ Scoring rules:
 - Calculate safety_score and health_score yourself from the actual ingredients, nutrition, additives, and product context.
 - Do not lower score just because the product is packaged.
 - If sugar, fat, sodium, and additives are reasonable, keep score high.
+- For every all_ingredients item, write why_this_matters as one natural paragraph based on global food-science/nutrition knowledge, the user's profile, one realistic benefit, and one disadvantage if consumed in excess. Do not make it a labeled list.
 - Give practical day/week frequency advice for both healthy and unhealthy products.
 """
 
@@ -192,6 +200,49 @@ def concern_for_ingredient(ingredient: str) -> Optional[dict]:
             "reason": "Added flavouring is not automatically unsafe, but it can signal a highly processed food and may make very sweet or salty products easier to overconsume.",
         }
     return None
+
+
+def ingredient_benefit(ingredient: str) -> str:
+    low = ingredient.lower()
+    if any(word in low for word in ["protein", "milk", "whey", "casein", "soy"]):
+        return "Can contribute protein or texture, depending on the actual amount in the product."
+    if any(word in low for word in ["fiber", "fibre", "oat", "whole", "bran", "fruit", "vegetable"]):
+        return "Can add fiber, micronutrients, or a more filling texture when present in meaningful amounts."
+    if any(word in low for word in ["sugar", "syrup", "glucose", "fructose"]):
+        return "Provides quick energy and sweetness, but it has little nutritional value beyond calories."
+    if any(word in low for word in ["salt", "sodium"]):
+        return "Improves taste and preservation, and sodium is needed in small amounts for fluid balance."
+    if any(word in low for word in ["oil", "fat", "butter"]):
+        return "Adds energy, mouthfeel, and helps carry fat-soluble flavors."
+    if any(word in low for word in ["preservative", "benzoate", "sorbate", "nitrite", "nitrate"]):
+        return "Helps keep packaged food stable for longer and reduces spoilage risk."
+    if any(word in low for word in ["colour", "color", "flavour", "flavor", "artificial"]):
+        return "Mainly improves appearance or taste; it usually does not add meaningful nutrition."
+    return "No major special benefit was identified, but it may contribute taste, texture, or product structure."
+
+
+def ingredient_excess_warning(ingredient: str, status: str) -> str:
+    low = ingredient.lower()
+    if any(word in low for word in ["sugar", "syrup", "glucose", "fructose"]):
+        return "Too much added sugar can raise calorie intake and may worsen dental, weight, and blood-sugar goals over time."
+    if any(word in low for word in ["salt", "sodium"]):
+        return "Too much sodium can make the product less suitable for frequent use, especially for blood pressure or water-retention concerns."
+    if any(word in low for word in ["oil", "palm", "fat", "butter"]):
+        return "Too much added fat, especially saturated fat, can increase calorie load and may work against heart-health or weight goals."
+    if any(word in low for word in ["colour", "color", "flavour", "flavor", "artificial", "preservative", "benzoate", "sorbate", "bha", "bht"]):
+        return "Frequent intake can increase reliance on ultra-processed foods and may be unsuitable for sensitive users."
+    if status == "avoid":
+        return "Frequent intake is not recommended for your profile because this ingredient has a stronger safety or allergy concern."
+    if status == "caution":
+        return "Having it often may add up across the diet, so keep portions and frequency moderate."
+    return "Even generally safe ingredients can be a problem in excess if they crowd out a balanced diet."
+
+
+def ingredient_why_this_matters(ingredient: str, status: str, personalized_warning: str = "") -> str:
+    benefit = ingredient_benefit(ingredient)
+    excess = ingredient_excess_warning(ingredient, status)
+    profile_note = personalized_warning or "No direct conflict with your saved profile was detected."
+    return f"{profile_note} From general food-science context, {benefit[0].lower() + benefit[1:]} {excess}"
 
 
 def fallback_analysis(profile: dict, ingredients_text: str, nutriments: Optional[dict] = None) -> dict:
@@ -255,13 +306,21 @@ def fallback_analysis(profile: dict, ingredients_text: str, nutriments: Optional
         "weekly_frequency_advice": "Up to 4 to 6 times per week is reasonable in balanced portions." if score >= 80 else "Keep it around 1 to 3 times per week." if score >= 55 else "Limit to once per week or less.",
         "flagged_ingredients": flags,
         "all_ingredients": [
-            {
+            (
+                lambda status, personalized_warning: {
                 "name": item,
                 "scientific_name": item,
-                "status": "avoid" if any(flag["name"] == item and flag["severity"] == "high" for flag in flags) else "caution" if any(flag["name"] == item for flag in flags) else "safe",
+                "status": status,
                 "reason": next((flag["reason"] for flag in flags if flag["name"] == item), "No major long-term concern was detected for this ingredient based on the available label text."),
-                "personalized_warning": next((flag["personalized_warning"] for flag in flags if flag["name"] == item), "No direct conflict with your saved profile was detected.")
-            }
+                "personalized_warning": personalized_warning,
+                "why_this_matters": ingredient_why_this_matters(item, status, personalized_warning),
+                "benefit": ingredient_benefit(item),
+                "excess_warning": ingredient_excess_warning(item, status)
+                }
+            )(
+                "avoid" if any(flag["name"] == item and flag["severity"] == "high" for flag in flags) else "caution" if any(flag["name"] == item for flag in flags) else "safe",
+                next((flag["personalized_warning"] for flag in flags if flag["name"] == item), "No direct conflict with your saved profile was detected.")
+            )
             for item in ingredients
         ],
         "nutriment_observations": ["Review sugar, sodium, saturated fat, protein, and fiber against your daily needs."],
@@ -280,7 +339,10 @@ def normalize_ingredient_item(item, rule_items: dict) -> dict:
             "scientific_name": source.get("scientific_name") or name,
             "status": source.get("status") or "safe",
             "reason": source.get("reason") or "No major long-term concern was detected for this ingredient based on the available label text.",
-            "personalized_warning": source.get("personalized_warning") or "No direct conflict with your saved profile was detected."
+            "personalized_warning": source.get("personalized_warning") or "No direct conflict with your saved profile was detected.",
+            "why_this_matters": source.get("why_this_matters") or ingredient_why_this_matters(name, source.get("status") or "safe", source.get("personalized_warning")),
+            "benefit": source.get("benefit") or ingredient_benefit(name),
+            "excess_warning": source.get("excess_warning") or ingredient_excess_warning(name, source.get("status") or "safe")
         }
     if not isinstance(item, dict):
         return {}
@@ -288,12 +350,16 @@ def normalize_ingredient_item(item, rule_items: dict) -> dict:
     source = rule_items.get(name.lower(), {})
     if not name:
         return {}
+    status = item.get("status") or source.get("status") or "safe"
     return {
         "name": name,
         "scientific_name": item.get("scientific_name") or source.get("scientific_name") or name,
-        "status": item.get("status") or source.get("status") or "safe",
+        "status": status,
         "reason": item.get("reason") or source.get("reason") or "No major long-term concern was detected for this ingredient based on the available label text.",
-        "personalized_warning": item.get("personalized_warning") or source.get("personalized_warning") or "No direct conflict with your saved profile was detected."
+        "personalized_warning": item.get("personalized_warning") or source.get("personalized_warning") or "No direct conflict with your saved profile was detected.",
+        "why_this_matters": item.get("why_this_matters") or source.get("why_this_matters") or ingredient_why_this_matters(name, status, item.get("personalized_warning") or source.get("personalized_warning")),
+        "benefit": item.get("benefit") or source.get("benefit") or ingredient_benefit(name),
+        "excess_warning": item.get("excess_warning") or source.get("excess_warning") or ingredient_excess_warning(name, status)
     }
 
 
@@ -401,11 +467,9 @@ async def analyze_with_groq(profile: dict, ingredients_text: str, nutriments: Op
         ]
     )
     content = response.choices[0].message.content or "{}"
-    try:
-        data = json.loads(content)
-    except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", content, re.S)
-        data = json.loads(match.group(0)) if match else {}
+    data = parse_json_object(content)
+    if not data:
+        raise ModelResponseParseError("Groq returned malformed JSON")
     return normalize_model_analysis(data, profile, ingredients_text, nutriments)
 
 
@@ -413,12 +477,60 @@ def normalize_ai_response(data: dict, profile: dict, ingredients_text: str, nutr
     return normalize_model_analysis(data, profile, ingredients_text, nutriments)
 
 
+def extract_json_objects(content: str) -> list[str]:
+    objects = []
+    start = None
+    depth = 0
+    in_string = False
+    escaped = False
+
+    for index, char in enumerate(content or ""):
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+
+        if char == '"':
+            in_string = True
+        elif char == "{":
+            if depth == 0:
+                start = index
+            depth += 1
+        elif char == "}" and depth:
+            depth -= 1
+            if depth == 0 and start is not None:
+                objects.append(content[start:index + 1])
+                start = None
+
+    return objects
+
+
 def parse_json_object(content: str) -> dict:
+    text = (content or "").strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.I)
+        text = re.sub(r"\s*```$", "", text)
+
     try:
-        return json.loads(content)
+        data = json.loads(text)
     except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", content or "", re.S)
-        return json.loads(match.group(0)) if match else {}
+        for candidate in extract_json_objects(text):
+            try:
+                data = json.loads(candidate)
+                break
+            except json.JSONDecodeError:
+                continue
+        else:
+            return {}
+    return data if isinstance(data, dict) else {}
+
+
+class ModelResponseParseError(RuntimeError):
+    pass
 
 
 async def analyze_with_ollama(profile: dict, ingredients_text: str, nutriments: Optional[dict] = None, product_context: str = "") -> dict:
@@ -457,7 +569,7 @@ async def analyze_ingredients(profile: dict, ingredients_text: str, nutriments: 
         data = await analyze_with_groq(profile, ingredients_text, nutriments, product_context)
         data["ai_provider_used"] = "groq"
         return data
-    except (RateLimitError, APIStatusError, APIConnectionError, APITimeoutError, RuntimeError) as exc:
+    except (RateLimitError, APIStatusError, APIConnectionError, APITimeoutError, RuntimeError, ModelResponseParseError) as exc:
         data = await analyze_with_ollama(profile, ingredients_text, nutriments, product_context)
         data["ai_provider_used"] = "ollama" if not data.get("ollama_error") else "local_rules"
         data["groq_error"] = exc.__class__.__name__

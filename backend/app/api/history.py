@@ -17,8 +17,10 @@ async def get_history(page: int = 1, limit: int = 20, filter: str = "all", searc
         stmt = stmt.where(ScanHistory.product_name.ilike(f"%{search}%"))
     total = await db.scalar(select(func.count()).select_from(stmt.subquery()))
     scans = (await db.scalars(stmt.order_by(ScanHistory.created_at.desc()).offset((page - 1) * limit).limit(limit))).all()
+    analysis_rows = (await db.scalars(select(Analysis).where(Analysis.scan_id.in_([scan.id for scan in scans])))).all() if scans else []
+    analysis_by_scan = {analysis.scan_id: analysis for analysis in analysis_rows}
     return {
-        "results": [{"id": scan.id, "barcode": scan.barcode, "product_name": scan.product_name, "product_image_url": scan.product_image_url, "safety_score": scan.safety_score, "verdict": scan.verdict, "flagged_count": scan.flagged_count, "created_at": scan.created_at} for scan in scans],
+        "results": [{"id": scan.id, "scan_id": scan.id, "analysis_id": analysis_by_scan.get(scan.id).id if analysis_by_scan.get(scan.id) else None, "barcode": scan.barcode, "product_name": scan.product_name, "product_image_url": scan.product_image_url, "safety_score": scan.safety_score, "verdict": scan.verdict, "flagged_count": scan.flagged_count, "created_at": scan.created_at} for scan in scans],
         "total": total or 0,
         "page": page,
         "limit": limit

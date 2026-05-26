@@ -17,7 +17,12 @@ const fallback = {
   health_score_out_of_10: 7.4,
   verdict: "CAUTION",
   flagged_ingredients: [{ name: "Artificial flavor", scientific_name: "Flavoring compound", severity: "medium", reason: "May be unsuitable for sensitive profiles.", personalized_warning: "Review this ingredient against your saved conditions." }],
-  all_ingredients: [{ name: "Sugar", status: "caution" }, { name: "Cocoa", status: "safe" }, { name: "Milk powder", status: "safe" }, { name: "Artificial flavor", status: "avoid" }],
+  all_ingredients: [
+    { name: "Sugar", status: "caution", why_this_matters: "No direct allergy conflict was detected, but sugar matters for daily energy balance. Globally, added sugar is mainly useful for quick energy and sweetness, while frequent high intake can work against dental, weight, and blood-sugar goals." },
+    { name: "Cocoa", status: "safe", why_this_matters: "No direct conflict with your saved profile was detected. Cocoa can add flavor and plant compounds, but cocoa-based packaged foods may still add calories when paired with sugar and fat." },
+    { name: "Milk powder", status: "safe", why_this_matters: "No direct conflict with your saved profile was detected. Milk powder can add protein, calcium, and creamy texture, though frequent intake may be unsuitable for people sensitive to dairy or products high in saturated fat." },
+    { name: "Artificial flavor", status: "avoid", why_this_matters: "Review this ingredient against your saved conditions. Artificial flavor mainly improves taste without meaningful nutrition, and frequent intake can increase reliance on ultra-processed foods." }
+  ],
   nutriments: { carbohydrates_100g: 52, proteins_100g: 6, fat_100g: 22, sugars_100g: 38, sodium_100g: 0.18, fiber_100g: 3 },
   daily_frequency_advice: "Avoid daily use because sugar is high.",
   weekly_frequency_advice: "Keep it to 1 to 2 times per week in a small portion.",
@@ -60,7 +65,12 @@ function IngredientCard({ item, index }) {
       </div>
       <motion.div initial={false} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} className="overflow-hidden">
         <p className="mt-4 text-sm leading-6 text-slate">{item.reason || "No specific issue identified by the AI rule engine."}</p>
-        <div className="mt-4 rounded-2xl bg-white/5 p-4"><p className="text-sm font-semibold text-mint">Why this matters for you</p><p className="mt-2 text-sm text-slate">{item.personalized_warning || "No direct conflict with your saved profile was detected."}</p></div>
+        <div className="mt-4 rounded-2xl bg-white/5 p-4">
+          <p className="text-sm font-semibold text-mint">Why this matters for you</p>
+          <p className="mt-2 text-sm leading-6 text-slate">
+            {item.why_this_matters || [item.personalized_warning, item.benefit, item.excess_warning].filter(Boolean).join(" ") || "No direct conflict with your saved profile was detected, but frequency and portion size still matter in the context of your whole diet."}
+          </p>
+        </div>
       </motion.div>
     </motion.div>
   );
