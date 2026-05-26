@@ -5,11 +5,13 @@ import { PageTransition } from "../components/PageTransition";
 import { DNASpinner } from "../components/DNASpinner";
 import { GlowButton, Pill } from "../components/Interactive";
 import { useProfileStore, useUIStore, useUserStore } from "../stores/useStores";
+import { authService } from "../services/authService";
 import { profileService } from "../services/profileService";
 
 const allergyOptions = ["Nuts", "Gluten", "Dairy", "Soy", "Eggs", "Shellfish", "Peanuts", "Fish"];
 const conditionOptions = ["Diabetes", "Hypertension", "Heart Disease", "Pregnant", "Kidney Disease", "Celiac Disease", "Lactose Intolerant", "None"];
 const dietOptions = ["Vegan", "Vegetarian", "None"];
+const googleScopes = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 
 function Section({ icon, title, children }) {
   return (
@@ -25,11 +27,14 @@ export default function Profile() {
   const profile = useProfileStore();
   const toast = useUIStore((state) => state.toast);
   const accessToken = useUserStore((state) => state.accessToken);
+  const user = useUserStore((state) => state.user);
+  const login = useUserStore((state) => state.login);
   const navigate = useNavigate();
   const [customOpen, setCustomOpen] = useState(false);
   const [custom, setCustom] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const toggle = (key, value) => {
     const current = profile[key];
@@ -54,6 +59,50 @@ export default function Profile() {
     window.setTimeout(() => navigate("/scanner"), 650);
   };
 
+  const signInWithGoogle = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      toast({ type: "error", title: "Google login not configured", message: "Set VITE_GOOGLE_CLIENT_ID in frontend env." });
+      return;
+    }
+    if (!window.google?.accounts?.oauth2) {
+      toast({ type: "error", title: "Google is still loading", message: "Try again in a moment." });
+      return;
+    }
+    setGoogleLoading(true);
+    const tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: googleScopes,
+      prompt: "consent",
+      callback: async (tokenResponse) => {
+        try {
+          if (!tokenResponse?.access_token) throw new Error("Missing Google access token");
+          const data = await authService.googleLogin(tokenResponse.access_token);
+          login({ user: data.user, accessToken: data.access_token });
+          toast({ type: "success", title: "Signed in with Google", message: `Welcome ${data.user.full_name}.` });
+        } catch {
+          toast({ type: "error", title: "Google login failed", message: "Could not verify your Google account." });
+        } finally {
+          setGoogleLoading(false);
+        }
+      }
+    });
+    tokenClient.requestAccessToken();
+  };
+
+  const bypassGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      const data = await authService.googleLogin("dev_bypass_token");
+      login({ user: data.user, accessToken: data.access_token });
+      toast({ type: "success", title: "Signed in as Developer", message: `Welcome ${data.user.full_name}.` });
+    } catch {
+      toast({ type: "error", title: "Bypass login failed", message: "Make sure backend server is running." });
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <PageTransition>
       <div className="mx-auto max-w-[680px]">
@@ -64,6 +113,21 @@ export default function Profile() {
         <div className={`glass relative mt-10 overflow-hidden p-6 md:p-9 ${saved ? "ring-2 ring-mint" : ""}`}>
           <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-mint to-violet" />
           <div className="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-mint/15 text-4xl text-mint animate-float">♙</div>
+          <div className="mt-6 rounded-2xl border border-mint/15 bg-ocean/50 p-4 text-center">
+            <p className="text-sm text-slate">{user ? `Signed in as ${user.full_name}` : "Sign in or create your account with Google to save scans and profile data."}</p>
+            {!user && (
+              <div className="flex flex-col gap-3 mt-4">
+                <GlowButton onClick={signInWithGoogle} variant="ghost" className="w-full rounded-2xl" disabled={googleLoading}>
+                  {googleLoading ? "Connecting Google..." : "Continue with Google"}
+                </GlowButton>
+                {(window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && (
+                  <GlowButton onClick={bypassGoogleLogin} variant="ghost" className="w-full rounded-2xl border-mint/30 hover:bg-mint/10 text-mint" disabled={googleLoading}>
+                    Continue as Local Developer (Bypass Google Auth)
+                  </GlowButton>
+                )}
+              </div>
+            )}
+          </div>
           <Section icon="!" title="Allergies">
             {allergyOptions.map((item) => <Pill key={item} selected={profile.allergies.includes(item)} onClick={() => toggle("allergies", item)}>{item}</Pill>)}
             <Pill selected={customOpen} onClick={() => setCustomOpen(!customOpen)}>+ Add Custom Allergy</Pill>

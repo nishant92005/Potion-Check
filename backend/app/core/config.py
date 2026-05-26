@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     serpapi_api_key: str = ""
     serpapi_base_url: str = "https://serpapi.com/search.json"
     serpapi_timeout_seconds: int = 20
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_people_api_url: str = "https://people.googleapis.com/v1/people/me"
     openfoodfacts_base_url: str = "https://world.openfoodfacts.org"
     openfoodfacts_user_agent: str = "PotionCheck/1.0 (contact: support@potioncheck.app)"
     database_url: str = "sqlite+aiosqlite:///./potioncheck.db"

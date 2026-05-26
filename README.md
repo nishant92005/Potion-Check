@@ -15,6 +15,7 @@ The project combines a React frontend, a FastAPI backend, OpenFoodFacts product 
 - OCR upload flow for extracting ingredient text from food label images.
 - Pasted ingredient text analysis.
 - User profile personalization with allergies, health conditions, and diet type.
+- Google login/signup using Google Identity Services plus People API profile lookup.
 - Product health and safety scoring.
 - Flagged ingredients with reasons, severity, and personalized warnings.
 - Nutrition observations, sugar and sodium analysis, gym-friendliness, weight-loss suitability, and frequency advice.
@@ -97,6 +98,7 @@ Potion-Check/
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `POST /api/auth/google`
 - `GET /api/auth/me`
 - `POST /api/auth/refresh`
 
@@ -152,6 +154,10 @@ SERPAPI_API_KEY=your_serpapi_key
 SERPAPI_BASE_URL=https://serpapi.com/search.json
 SERPAPI_TIMEOUT_SECONDS=20
 
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+GOOGLE_PEOPLE_API_URL=https://people.googleapis.com/v1/people/me
+
 OPENFOODFACTS_BASE_URL=https://world.openfoodfacts.org
 OPENFOODFACTS_USER_AGENT=PotionCheck/1.0 (contact: support@potioncheck.app)
 
@@ -163,6 +169,15 @@ ALLOWED_ORIGINS=https://your-frontend-domain.example
 ```
 
 Do not commit `backend/.env`. It contains private API keys.
+
+For the frontend, create `frontend/.env`:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+```
+
+Google login requests only basic profile and email scopes, then the backend verifies the account by calling People API.
 
 ## Local Development
 
@@ -199,7 +214,7 @@ npm run dev
 The frontend runs at:
 
 ```text
-http://localhost:5173
+http://localhost:8080
 ```
 
 ## Docker Development
@@ -212,7 +227,7 @@ docker compose up --build
 
 Services:
 
-- Frontend: `http://localhost:5173`
+- Frontend: `http://localhost:8080`
 - Backend: `http://localhost:8000`
 - Redis: `localhost:6379`
 

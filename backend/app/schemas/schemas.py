@@ -29,6 +29,10 @@ class UserLogin(BaseModel):
         return value.lower()
 
 
+class GoogleLoginIn(BaseModel):
+    access_token: str = Field(min_length=1)
+
+
 class UserOut(BaseModel):
     id: str
     email: str
